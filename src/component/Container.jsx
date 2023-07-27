@@ -1,51 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { Icon } from '@iconify/react';
+import { Icon } from "@iconify/react";
 
 export default function UserDetails() {
-
-  const [selectedValue, setSelectedValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedOption, setSelectedOption] = useState("")
+  const [selectedValue, setSelectedValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
 
   const getFacts = async () => {
     const res = await fetch("https://randomuser.me/api/?results=20");
     return res.json();
   };
 
-  const { data, error, isLoading } = useQuery('randomFacts', getFacts);
-  const [userData, setUserData] = useState([])
-  
+  const { data, error, isLoading } = useQuery("randomFacts", getFacts);
+  const [userData, setUserData] = useState([]);
+
   useEffect(() => {
-    setUserData(data?.results)
-  }, [data])
+    setUserData(data?.results);
+  }, [data]);
 
-
-
-  
   // Error and Loading states
   // if (error) return <div>Request Failed</div>;
   // if (isLoading) return <div>Loading...</div>;
 
-
   const handleInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
-
 
   const handleSearch = () => {
     const filteredResults = userData.filter(
       (user) =>
         user?.name?.first.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user?.name?.last.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user?.location?.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user?.location?.country
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         user?.gender.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     setUserData(filteredResults);
   };
-
- 
 
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value;
@@ -53,32 +47,30 @@ export default function UserDetails() {
     // filterDataByAge(selectedValue);
   };
 
-
   const filterDataByAge = (age) => {
-    if (age === '61') {
+    if (age === 61) {
       setUserData(userData.filter((user) => user?.dob?.age >= 61));
-    } else if (age === '30') {
-      setUserData(userData.filter((user) => user?.dob?.age <= 30));
-    } else {
-      const minAge = parseInt(age) - 30;
+    } else if (age === 60) {
       setUserData(
-        userData.filter((user) => user?.dob?.age <= parseInt(age) && user?.dob?.age > minAge)
+        userData.filter((user) => user?.dob?.age >= 31 && user?.dob?.age < 61)
       );
+    } else {
+      setUserData(userData.filter((user) => user?.dob?.age <= 30));
     }
   };
 
   useEffect(() => {
     filterDataByAge(selectedOption);
   }, [selectedOption]);
- 
+
+  console.log(selectedOption, "selectedOption");
+
   const options = [
-    { value: 30, label: '0 - 30' },
-    { value: 60, label: '31 - 60' },
-    { value: 61, label: '61 Upward' },
+    { value: 30, label: "0 - 30" },
+    { value: 60, label: "31 - 60" },
+    { value: 61, label: "61 Upward" },
   ];
 
-
- 
   return (
     <div className="w-full px-4 py-8">
       <h2 className="text-xl font-semibold mb-4">User Profile</h2>
@@ -92,11 +84,17 @@ export default function UserDetails() {
             placeholder="Search by name, nationality, or gender"
           />
           <span onClick={handleSearch}>
-            <Icon className="absolute top-[22px] right-3" icon="fluent:search-24-filled" color="black" width="20" height="20" />
+            <Icon
+              className="absolute top-[22px] right-3"
+              icon="fluent:search-24-filled"
+              color="black"
+              width="20"
+              height="20"
+            />
           </span>
         </div>
         <div className="flex gap-4">
-          <div className="flex" >
+          <div className="flex">
             <select value={selectedOption} onChange={handleSelectChange}>
               <option value="">Filter by age range</option>
               {options.map((option) => (
@@ -106,7 +104,6 @@ export default function UserDetails() {
               ))}
             </select>
           </div>
-        
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -123,11 +120,21 @@ export default function UserDetails() {
           <tbody>
             {userData?.map((user, index) => (
               <tr key={user?.name?.first} className="text-center">
-                <td className="border border-gray-500 px-4 py-2">{index + 1}</td>
-                <td className="border border-gray-500 px-4 py-2">{user?.name?.title} {user?.name?.first} {user?.name?.last}</td>
-                <td className="border border-gray-500 px-4 py-2">{user?.dob?.age}</td>
-                <td className="border border-gray-500 px-4 py-2 capitalize">{user?.gender}</td>
-                <td className="border border-gray-500 px-4 py-2">{user?.location?.country}</td>
+                <td className="border border-gray-500 px-4 py-2">
+                  {index + 1}
+                </td>
+                <td className="border border-gray-500 px-4 py-2">
+                  {user?.name?.title} {user?.name?.first} {user?.name?.last}
+                </td>
+                <td className="border border-gray-500 px-4 py-2">
+                  {user?.dob?.age}
+                </td>
+                <td className="border border-gray-500 px-4 py-2 capitalize">
+                  {user?.gender}
+                </td>
+                <td className="border border-gray-500 px-4 py-2">
+                  {user?.location?.country}
+                </td>
               </tr>
             ))}
           </tbody>
