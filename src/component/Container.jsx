@@ -3,7 +3,6 @@ import { useQuery } from "react-query";
 import { Icon } from "@iconify/react";
 
 export default function UserDetails() {
-  const [selectedValue, setSelectedValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -12,7 +11,7 @@ export default function UserDetails() {
     return res.json();
   };
 
-  const { data, error, isLoading } = useQuery("randomFacts", getFacts);
+  const { data, error, isLoading, refetch } = useQuery("randomFacts", getFacts);
   const [userData, setUserData] = useState([]);
 
   useEffect(() => {
@@ -48,9 +47,9 @@ export default function UserDetails() {
   };
 
   const filterDataByAge = (age) => {
-    if (age === 61) {
+    if (age === "61") {
       setUserData(userData.filter((user) => user?.dob?.age >= 61));
-    } else if (age === 60) {
+    } else if (age === "60") {
       setUserData(
         userData.filter((user) => user?.dob?.age >= 31 && user?.dob?.age < 61)
       );
@@ -63,7 +62,7 @@ export default function UserDetails() {
     filterDataByAge(selectedOption);
   }, [selectedOption]);
 
-  console.log(selectedOption, "selectedOption");
+  console.log(typeof selectedOption, "selectedOption");
 
   const options = [
     { value: 30, label: "0 - 30" },
